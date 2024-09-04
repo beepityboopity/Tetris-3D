@@ -30,7 +30,24 @@
 		</Build>
 		<Compiler>
 			<Add option="-Wall" />
+			<Add directory="../resources/includes" />
+			<Add directory="../source" />
 		</Compiler>
+		<Linker>
+			<Add library="../../graphics_test/library/libglfw3.a" />
+			<Add directory="../resources/includes" />
+		</Linker>
+		<Unit filename="../resources/Add To Project/glad.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../resources/includes/shaders/shader_class.cpp" />
+		<Unit filename="../resources/includes/texture setup/stbi_load.cpp" />
+		<Unit filename="../source/frag1.fs" />
+		<Unit filename="../source/main.cpp" />
+		<Unit filename="../source/vertex1.vs" />
+		<Unit filename="boxFrame.png" />
+		<Unit filename="frag1.fs" />
+		<Unit filename="vertex1.vs" />
 		<Extensions />
 	</Project>
 </CodeBlocks_project_file>

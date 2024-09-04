@@ -1,0 +1,10 @@
+8 piece tetrominos
+pieces = 0.1 size of playing field
+tetrominos spawn 1.5 away from center
+pieces are stored as vec3 positions +- 0.05
+
+randomly select direction
+spawn cube 1.5 away in that direction
+every second cube moves 0.1 in the opposite direction
+cube stops when it is 2.0 away from original position
+
