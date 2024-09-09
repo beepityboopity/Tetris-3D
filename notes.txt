@@ -8,3 +8,50 @@ spawn cube 1.5 away in that direction
 every second cube moves 0.1 in the opposite direction
 cube stops when it is 2.0 away from original position
 
+active piece:
+8 cube positions, 1 color ID
+when movement: all position at index +- movement
+
+move collision:
+for all piece cubes, if new position in cube array, dont
+
+falling: 
+for all piece cubes, if new position in cube array, stop, 
+add all cube and color ID to cube array, create new active piece
+
+creating new piece:
+randomly select piece type, place at top, make it active
+
+shapes:
+cube:
+
+(0.0, 0.0, 0.0)
+(0.0, 0.0, 0.05)
+(0.0, 0.05, 0.0)
+(0.0, 0.05, 0.05)
+(0.05, 0.0, 0.0)
+(0.05, 0.0, 0.05)
+(0.05, 0.05, 0.0)
+(0.05, 0.05, 0.05)
+
+I:
+
+(0.0, 0.0, 0.0)
+(0.05, 0.0, 0.0)
+(0.1, 0.0, 0.0)
+(0.05, 0.05, 0.0)
+(0.05, 0.1, 0.0)
+(0.0, 0.15, 0.0)
+(0.05, 0.15, 0.0)
+(0.1, 0.15, 0.0)
+
+Long:
+
+(0.0, 0.0, 0.0)
+(0.0, 0.05, 0.0)
+(0.0, 0.1, 0.0)
+(0.0, 0.15, 0.0)
+(0.0, 0.2, 0.0)
+(0.0, 0.25, 0.0)
+(0.0, 0.3, 0.0)
+(0.0, 0.35, 0.0)

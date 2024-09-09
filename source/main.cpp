@@ -9,17 +9,68 @@
 
 void frameCallback(GLFWwindow* window, int width, int height);
 void camInput(GLFWwindow* window);
-void moveCube(GLFWwindow* window);
+void moveActive(GLFWwindow* window);
+
 
 
 int rotationVar1 = 20;
 int rotationVar2 = 45;
 float zoomVar = -20;
 
-glm::vec3 cubePos = glm::vec3(-0.45, 0.45, 0.45);
+glm::vec3 cubePos = glm::vec3(-0.45, 0.05, 0.45);
 double lastMove = 0.0;
 
+
+glm::vec4 cubeArray[1000] = {};
+
+glm::vec3 octoCube[8] = {
+
+glm::vec3(0.05, 0.05, 0.05),
+glm::vec3(0.05, 0.05, 0.15),
+glm::vec3(0.05, 0.15, 0.05),
+glm::vec3(0.05, 0.15, 0.15),
+glm::vec3(0.15, 0.05, 0.05),
+glm::vec3(0.15, 0.05, 0.15),
+glm::vec3(0.15, 0.15, 0.05),
+glm::vec3(0.15, 0.15, 0.15),
+
+};
+
+glm::vec3 octoLine[8] = {
+
+glm::vec3(0.05, 0.0, 0.05),
+glm::vec3(0.05, 0.05, 0.05),
+glm::vec3(0.05, 0.1, 0.05),
+glm::vec3(0.05, 0.15, 0.05),
+glm::vec3(0.05, 0.2, 0.05),
+glm::vec3(0.05, 0.25, 0.05),
+glm::vec3(0.05, 0.3, 0.05),
+glm::vec3(0.05, 0.35, 0.05),
+
+};
+
+glm::vec3 octoI[8] = {
+
+glm::vec3(0.05, 0.05, 0.05),
+glm::vec3(0.15, 0.05, 0.05),
+glm::vec3(0.25, 0.05, 0.05),
+glm::vec3(0.15, 0.15, 0.05),
+glm::vec3(0.15, 0.25, 0.05),
+glm::vec3(0.05, 0.35, 0.05),
+glm::vec3(0.15, 0.35, 0.05),
+glm::vec3(0.25, 0.35, 0.05),
+
+};
+
+glm::vec3 activePiece[8];
+
 int main() {
+    for(int i = 0; i < 8; i++) activePiece[i] = octoCube[i];
+
+    for(int i = 0; i < 1000; i++) cubeArray[i] = glm::vec4(3.0, 3.0, 3.0, -1.0);
+
+    for(int i = 0; i < 8; i++) cubeArray[i] = glm::vec4(octoI[i], 1.0);
+
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -93,8 +144,6 @@ int main() {
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
 
-    //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-
     unsigned int gridTexture;
     int width, height, nrChannels;
     // grid
@@ -150,7 +199,7 @@ int main() {
     while (!glfwWindowShouldClose(window)) {
 
         camInput(window);
-        moveCube(window);
+        moveActive(window);
 
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -179,6 +228,28 @@ int main() {
         baseShader.setInt("currentTexture", 1);
         baseShader.setMat4("model", model);
         glDrawArrays(GL_TRIANGLES, 0, 36);
+
+
+        // shape test
+        for(int i = 0; i < 8; i++) {
+            model = glm::mat4(1.0f);
+            model = glm::translate(model, activePiece[i]);
+            model = glm::scale(model, glm::vec3(0.1, 0.1, 0.1));
+            baseShader.setMat4("model", model);
+            glDrawArrays(GL_TRIANGLES, 0, 36);
+        }
+
+        // cube array
+        for(int i = 0; i < 1000; i++) {
+            if(cubeArray[i].w != -1.0) {
+                model = glm::mat4(1.0f);
+                model = glm::translate(model, glm::vec3(cubeArray[i].x, cubeArray[i].y, cubeArray[i].z));
+                model = glm::scale(model, glm::vec3(0.1, 0.1, 0.1));
+                baseShader.setMat4("model", model);
+                glDrawArrays(GL_TRIANGLES, 0, 36);
+            }
+        }
+
 
         glfwSwapBuffers(window);
         glfwPollEvents();
@@ -210,31 +281,48 @@ void camInput(GLFWwindow* window) {
     if(rotationVar2 < -360) rotationVar2 += 360;
 }
 
-void moveCube(GLFWwindow* window) {
-    if(glfwGetTime() - lastMove < 0.25) return;
-    if (glfwGetKey(window, GLFW_KEY_I) == GLFW_PRESS) {
-        cubePos.y += 0.1;
-        lastMove = glfwGetTime();
-    }
-    if (glfwGetKey(window, GLFW_KEY_K) == GLFW_PRESS) {
-        cubePos.y -= 0.1;
-        lastMove = glfwGetTime();
-    }
+void moveActive(GLFWwindow* window) {
+    if(glfwGetTime() - lastMove < 0.15) return;
     if (glfwGetKey(window, GLFW_KEY_J) == GLFW_PRESS) {
-        cubePos.x += 0.1;
+        for(int i = 0; i < 8; i++) {
+
+            if(activePiece[i].x >= 0.40) {
+                std::cout << "45 FOUND\n";
+                return;
+            }
+        }
+        for(int i = 0; i < 8; i++) activePiece[i].x += 0.1;
+
+
+        for(int i = 0; i < 8; i++) std::cout << activePiece[i].x << " ";
+        std::cout << "\n";
         lastMove = glfwGetTime();
     }
     if (glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS) {
-        cubePos.x -= 0.1;
+        for(int i = 0; i < 8; i++) activePiece[i].x -= 0.1;
         lastMove = glfwGetTime();
     }
+    if (glfwGetKey(window, GLFW_KEY_I) == GLFW_PRESS) {
+        for(int i = 0; i < 8; i++) activePiece[i].z -= 0.1;
+        lastMove = glfwGetTime();
+    }
+    if (glfwGetKey(window, GLFW_KEY_K) == GLFW_PRESS) {
+        for(int i = 0; i < 8; i++) activePiece[i].z += 0.1;
+        lastMove = glfwGetTime();
+    }
+
     if (glfwGetKey(window, GLFW_KEY_U) == GLFW_PRESS) {
-        cubePos.z -= 0.1;
+        for(int i = 0; i < 8; i++) activePiece[i].y -= 0.1;
         lastMove = glfwGetTime();
     }
     if (glfwGetKey(window, GLFW_KEY_O) == GLFW_PRESS) {
-        cubePos.z += 0.1;
+        for(int i = 0; i < 8; i++) activePiece[i].y += 0.1;
         lastMove = glfwGetTime();
     }
+
+
+
+
+
 }
 
