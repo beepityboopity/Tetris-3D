@@ -1,0 +1,36 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\Christianna\\Documents\\GitHub\\tetris-3d\\tetris-vstudio\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{CA36EE85-15B0-4D1C-AD4F-7327F6E96CA7}|tetris-vstudio\\tetris-vstudio.vcxproj|C:\\Users\\Christianna\\Documents\\GitHub\\tetris-3d\\source\\main.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 237,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "main.cpp",
+              "DocumentMoniker": "C:\\Users\\Christianna\\Documents\\GitHub\\tetris-3d\\source\\main.cpp",
+              "RelativeDocumentMoniker": "..\\source\\main.cpp",
+              "ToolTip": "C:\\Users\\Christianna\\Documents\\GitHub\\tetris-3d\\source\\main.cpp",
+              "RelativeToolTip": "..\\source\\main.cpp",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAEcAAABHAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2024-09-13T00:50:40.011Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
