@@ -10,29 +10,30 @@
 void frameCallback(GLFWwindow* window, int width, int height);
 void camInput(GLFWwindow* window);
 void moveActive(GLFWwindow* window);
-
+bool collisionTest();
 
 
 int rotationVar1 = 20;
 int rotationVar2 = 45;
-float zoomVar = -20;
+float zoomVar = -10;
 
-glm::vec3 cubePos = glm::vec3(-0.45, 0.05, 0.45);
+glm::vec3 cubePos = glm::vec3(-45, 5, 45);
 double lastMove = 0.0;
 
+glm::vec3 temp[8];
 
 glm::vec4 cubeArray[1000] = {};
 
 glm::vec3 octoCube[8] = {
 
-glm::vec3(0.05, 0.05, 0.05),
-glm::vec3(0.05, 0.05, 0.15),
-glm::vec3(0.05, 0.15, 0.05),
-glm::vec3(0.05, 0.15, 0.15),
-glm::vec3(0.15, 0.05, 0.05),
-glm::vec3(0.15, 0.05, 0.15),
-glm::vec3(0.15, 0.15, 0.05),
-glm::vec3(0.15, 0.15, 0.15),
+glm::vec3(5, 5, 5),
+glm::vec3(5, 5, 15),
+glm::vec3(5, 15, 5),
+glm::vec3(5, 15, 15),
+glm::vec3(15, 5, 5),
+glm::vec3(15, 5, 15),
+glm::vec3(15, 15, 5),
+glm::vec3(15, 15, 15),
 
 };
 
@@ -51,14 +52,14 @@ glm::vec3(0.05, 0.35, 0.05),
 
 glm::vec3 octoI[8] = {
 
-glm::vec3(0.05, 0.05, 0.05),
-glm::vec3(0.15, 0.05, 0.05),
-glm::vec3(0.25, 0.05, 0.05),
-glm::vec3(0.15, 0.15, 0.05),
-glm::vec3(0.15, 0.25, 0.05),
-glm::vec3(0.05, 0.35, 0.05),
-glm::vec3(0.15, 0.35, 0.05),
-glm::vec3(0.25, 0.35, 0.05),
+glm::vec3(5, 5, 5),
+glm::vec3(15, 5, 5),
+glm::vec3(25, 5, 5),
+glm::vec3(15, 15, 5),
+glm::vec3(15, 25, 5),
+glm::vec3(5, 35, 5),
+glm::vec3(15, 35, 5),
+glm::vec3(25, 35, 5),
 
 };
 
@@ -66,8 +67,9 @@ glm::vec3 activePiece[8];
 
 int main() {
     for(int i = 0; i < 8; i++) activePiece[i] = octoCube[i];
+    for(int i = 0; i < 8; i++) activePiece[i].y += 100;
 
-    for(int i = 0; i < 1000; i++) cubeArray[i] = glm::vec4(3.0, 3.0, 3.0, -1.0);
+    for(int i = 0; i < 1000; i++) cubeArray[i] = glm::vec4(30, 30, 30, -1.0);
 
     for(int i = 0; i < 8; i++) cubeArray[i] = glm::vec4(octoI[i], 1.0);
 
@@ -205,7 +207,7 @@ int main() {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 
-
+        // camera
         view = glm::mat4(1.0f);
         view = glm::translate(view, glm::vec3(0.0f, 0.0f, (float)zoomVar / 3));
         view = glm::rotate(view, glm::radians((float)rotationVar1), glm::vec3(1.0, 0.0, 0.0)); // vertical x
@@ -223,7 +225,7 @@ int main() {
 
         // cube
         model = glm::mat4(1.0f);
-        model = glm::translate(model, cubePos);
+        model = glm::translate(model, glm::vec3((float)cubePos.x / 100, (float)cubePos.y / 100, (float)cubePos.z / 100));
         model = glm::scale(model, glm::vec3(0.1, 0.1, 0.1));
         baseShader.setInt("currentTexture", 1);
         baseShader.setMat4("model", model);
@@ -233,7 +235,7 @@ int main() {
         // shape test
         for(int i = 0; i < 8; i++) {
             model = glm::mat4(1.0f);
-            model = glm::translate(model, activePiece[i]);
+            model = glm::translate(model, glm::vec3((float)activePiece[i].x / 100, (float)activePiece[i].y / 100, (float)activePiece[i].z / 100));
             model = glm::scale(model, glm::vec3(0.1, 0.1, 0.1));
             baseShader.setMat4("model", model);
             glDrawArrays(GL_TRIANGLES, 0, 36);
@@ -243,7 +245,7 @@ int main() {
         for(int i = 0; i < 1000; i++) {
             if(cubeArray[i].w != -1.0) {
                 model = glm::mat4(1.0f);
-                model = glm::translate(model, glm::vec3(cubeArray[i].x, cubeArray[i].y, cubeArray[i].z));
+                model = glm::translate(model, glm::vec3((float)cubeArray[i].x / 100, (float)cubeArray[i].y / 100, (float)cubeArray[i].z / 100));
                 model = glm::scale(model, glm::vec3(0.1, 0.1, 0.1));
                 baseShader.setMat4("model", model);
                 glDrawArrays(GL_TRIANGLES, 0, 36);
@@ -283,46 +285,54 @@ void camInput(GLFWwindow* window) {
 
 void moveActive(GLFWwindow* window) {
     if(glfwGetTime() - lastMove < 0.15) return;
+
+    for(int i = 0; i < 8; i++) temp[i] = activePiece[i];
+
     if (glfwGetKey(window, GLFW_KEY_J) == GLFW_PRESS) {
         for(int i = 0; i < 8; i++) {
 
-            if(activePiece[i].x >= 0.40) {
-                std::cout << "45 FOUND\n";
+            if(activePiece[i].x >= 40) {
                 return;
             }
         }
-        for(int i = 0; i < 8; i++) activePiece[i].x += 0.1;
-
-
-        for(int i = 0; i < 8; i++) std::cout << activePiece[i].x << " ";
-        std::cout << "\n";
+        for(int i = 0; i < 8; i++) activePiece[i].x += 10;
         lastMove = glfwGetTime();
     }
     if (glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS) {
-        for(int i = 0; i < 8; i++) activePiece[i].x -= 0.1;
+        for(int i = 0; i < 8; i++) activePiece[i].x -= 10;
         lastMove = glfwGetTime();
     }
     if (glfwGetKey(window, GLFW_KEY_I) == GLFW_PRESS) {
-        for(int i = 0; i < 8; i++) activePiece[i].z -= 0.1;
+        for(int i = 0; i < 8; i++) activePiece[i].z -= 10;
         lastMove = glfwGetTime();
     }
     if (glfwGetKey(window, GLFW_KEY_K) == GLFW_PRESS) {
-        for(int i = 0; i < 8; i++) activePiece[i].z += 0.1;
+        for(int i = 0; i < 8; i++) activePiece[i].z += 10;
         lastMove = glfwGetTime();
     }
-
     if (glfwGetKey(window, GLFW_KEY_U) == GLFW_PRESS) {
-        for(int i = 0; i < 8; i++) activePiece[i].y -= 0.1;
+        for(int i = 0; i < 8; i++) activePiece[i].y -= 10;
         lastMove = glfwGetTime();
     }
     if (glfwGetKey(window, GLFW_KEY_O) == GLFW_PRESS) {
-        for(int i = 0; i < 8; i++) activePiece[i].y += 0.1;
+        for(int i = 0; i < 8; i++) activePiece[i].y += 10;
         lastMove = glfwGetTime();
     }
+    if(!collisionTest()) {
+        for(int i = 0; i < 8; i++) activePiece[i] = temp[i];
+    }
+}
 
-
-
-
-
+bool collisionTest() {
+    for(int i = 0; i < 8; i++) {
+        int j = 0;
+        while(cubeArray[j].w != -1.0) {
+            if(glm::vec3(cubeArray[j].x, cubeArray[j].y, cubeArray[j].z) == activePiece[i]) {
+                return false;
+            }
+            j += 1;
+        }
+    }
+    return true;
 }
 
