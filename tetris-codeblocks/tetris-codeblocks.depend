@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1726234163 source:/home/singularity/Documents/tetris-3d/source/main.cpp
+1726850318 source:/home/singularity/Documents/tetris-3d/source/main.cpp
 	<glad/glad.h>
 	<GLFW/glfw3.h>
 	<texture setup/stb_image.h>
@@ -8,6 +8,7 @@
 	<glm/glm.hpp>
 	<glm/gtc/matrix_transform.hpp>
 	<glm/gtc/type_ptr.hpp>
+	<random>
 
 1725458501 /home/singularity/Documents/tetris-3d/resources/includes/glad/glad.h
 	<KHR/khrplatform.h>

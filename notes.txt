@@ -55,3 +55,38 @@ Long:
 (0.0, 0.25, 0.0)
 (0.0, 0.3, 0.0)
 (0.0, 0.35, 0.0)
+
+
+
+
+
+
+
+
+completion check
+----------------
+
+[...cube to check completion on...]
+
+checking line at y,z
+collect all cube with matching y,z
+if 10: completed
+
+assume completed
+assume -y gravity
+
+find and collect all cube in >y,z
+apply gravity to found cubes
+
+for all found cube, check completion
+
+------------------------------------
+
+if gravity axis not in checked line plane axis, no need to apply gravity
+
+axis to check per cube: x,y - y,z - x,z
+
+
+
+
+
