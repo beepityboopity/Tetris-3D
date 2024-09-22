@@ -7,6 +7,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <random>
+#include <vector>
 
 /* random int generation
 
@@ -40,7 +41,7 @@ int currentSpawn = 0;
 glm::vec3 temp[8];
 
 glm::vec4 cubeArray[1000] = {};
-glm::vec4 completionQueue[1000] = {};
+std::vector<glm::vec3> cubesCheck = {};
 
 glm::vec3 octoCube[8] = {
 
@@ -408,11 +409,13 @@ bool collisionTest() {
 }
 
 void newPieceSpawn() {
-
+    
     currentSpawn = distr(gen);
     int endInd = 0;
     while(cubeArray[endInd].w != -1.0) endInd += 1;
     for(int i = 0; i < 8; i++) cubeArray[endInd + i] = glm::vec4(activePiece[i].x, activePiece[i].y, activePiece[i].z, 1.0);
+    for (int i = 0; i < 8; i++) cubesCheck.push_back(activePiece[i]);
+    completionCheck();
     for(int i = 0; i < 8; i++) activePiece[i] = octoCube[i] + (spawns[currentSpawn] * glm::vec3(10));
  }
 
@@ -449,6 +452,70 @@ void printCubeArray() {
 
 void completionCheck() {
 
+    // xy, xz, yz
+    // std::vector<glm::vec3> cubesCheck = {...} cubes to check completion for
+    std::vector<std::vector<int>> finishAxis = {}; // list of all completed lines to remove and apply gravity to - index 10 is the corresponding axis
+    int firstCubes = cubesCheck.size();
+
+    // gets all completed lines for each corresponding cube in cubesCheck
+    for (int i = 0; i < firstCubes; i++) {
+        for (int j = 0; j < 3; j++) {
+            std::vector<int> finishInd = {};
+            int k = 0;
+            if (j == 0) {
+                
+                while (cubeArray[k] != glm::vec4(-1, -1, -1, -1.0)) {
+                    if (glm::vec2(cubeArray[k].x, cubeArray[k].y) == glm::vec2(cubesCheck[i].x, cubesCheck[i].y)) {
+                        finishInd.push_back(k);
+                    }
+                    k++;
+                }
+            }
+            else if (j == 1) {
+                
+                while (cubeArray[k] != glm::vec4(-1, -1, -1, -1.0)) {
+                    if (glm::vec2(cubeArray[k].x, cubeArray[k].z) == glm::vec2(cubesCheck[i].x, cubesCheck[i].z)) {
+                        finishInd.push_back(k);
+                    }
+                    k++;
+                }
+            }
+            else{
+                
+                while (cubeArray[k] != glm::vec4(-1, -1, -1, -1.0)) {
+                    if (glm::vec2(cubeArray[k].y, cubeArray[k].z) == glm::vec2(cubesCheck[i].y, cubesCheck[i].z)) {
+                        finishInd.push_back(k);
+                    }
+                    k++;
+                }
+            }
+
+            if (finishInd.size() == 10) {
+                finishInd.push_back(j);
+                finishAxis.push_back(finishInd);
+                //for (int i = 0; i < 10; i++) cubeArray[finishInd[i]] = glm::vec4(-1, -1, -1, -1.0);
+                //orderArray();
+            }
+        }
+    }
+
+    for (int i = 0; i < finishAxis.size(); i++) {
+        for (int j = 0; j < 10; j++) {
+            cubeArray[finishAxis[i][j]] = glm::vec4(-1, -1, -1, -1.0);
+        }
+    }
+    orderArray();
+
+    // gravity - collect all the gravitied cubes
+    // gravity: x, y, z * 2
+    // axis: xy, xz, yz
+    // if gravity x: collect if xy, xz
+    // if gravity y: collect if xy, yz
+    // if gravity z: collect if xz, yz
+    
+    // empty cubes check
+    // add gravitied cubes to it
+    // completeion check again
 }
 
 

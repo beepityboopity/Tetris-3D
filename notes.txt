@@ -68,7 +68,7 @@ completion check
 
 [...cube to check completion on...]
 
-checking line at y,z
+checking line at y,z <- list of axis to check
 collect all cube with matching y,z
 if 10: completed
 
