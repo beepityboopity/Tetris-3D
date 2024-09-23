@@ -242,7 +242,6 @@ int main() {
 
 
     while (!glfwWindowShouldClose(window)) {
-
         camInput(window);
         moveActive(window);
         gravity();
@@ -409,18 +408,19 @@ bool collisionTest() {
 }
 
 void newPieceSpawn() {
-    
-    currentSpawn = distr(gen);
+
+
     int endInd = 0;
     while(cubeArray[endInd].w != -1.0) endInd += 1;
     for(int i = 0; i < 8; i++) cubeArray[endInd + i] = glm::vec4(activePiece[i].x, activePiece[i].y, activePiece[i].z, 1.0);
     for (int i = 0; i < 8; i++) cubesCheck.push_back(activePiece[i]);
     completionCheck();
+    currentSpawn = distr(gen);
     for(int i = 0; i < 8; i++) activePiece[i] = octoCube[i] + (spawns[currentSpawn] * glm::vec3(10));
  }
 
 void gravity() {
-    if(glfwGetTime() - lastGrav < 1.0) return;
+    if(glfwGetTime() - lastGrav < 0.5) return;
     for(int i = 0; i < 8; i++) temp[i] = activePiece[i];
     for(int i = 0; i < 8; i++) {
         activePiece[i] -= spawns[currentSpawn];
@@ -451,7 +451,6 @@ void printCubeArray() {
 }
 
 void completionCheck() {
-
     // xy, xz, yz
     // std::vector<glm::vec3> cubesCheck = {...} cubes to check completion for
     std::vector<std::vector<int>> finishAxis = {}; // list of all completed lines to remove and apply gravity to - index 10 is the corresponding axis
@@ -463,7 +462,7 @@ void completionCheck() {
             std::vector<int> finishInd = {};
             int k = 0;
             if (j == 0) {
-                
+
                 while (cubeArray[k] != glm::vec4(-1, -1, -1, -1.0)) {
                     if (glm::vec2(cubeArray[k].x, cubeArray[k].y) == glm::vec2(cubesCheck[i].x, cubesCheck[i].y)) {
                         finishInd.push_back(k);
@@ -472,7 +471,7 @@ void completionCheck() {
                 }
             }
             else if (j == 1) {
-                
+
                 while (cubeArray[k] != glm::vec4(-1, -1, -1, -1.0)) {
                     if (glm::vec2(cubeArray[k].x, cubeArray[k].z) == glm::vec2(cubesCheck[i].x, cubesCheck[i].z)) {
                         finishInd.push_back(k);
@@ -481,7 +480,7 @@ void completionCheck() {
                 }
             }
             else{
-                
+
                 while (cubeArray[k] != glm::vec4(-1, -1, -1, -1.0)) {
                     if (glm::vec2(cubeArray[k].y, cubeArray[k].z) == glm::vec2(cubesCheck[i].y, cubesCheck[i].z)) {
                         finishInd.push_back(k);
@@ -499,12 +498,10 @@ void completionCheck() {
         }
     }
 
-    for (int i = 0; i < finishAxis.size(); i++) {
-        for (int j = 0; j < 10; j++) {
-            cubeArray[finishAxis[i][j]] = glm::vec4(-1, -1, -1, -1.0);
-        }
-    }
-    orderArray();
+
+    cubesCheck = {};
+
+
 
     // gravity - collect all the gravitied cubes
     // gravity: x, y, z * 2
@@ -512,7 +509,191 @@ void completionCheck() {
     // if gravity x: collect if xy, xz
     // if gravity y: collect if xy, yz
     // if gravity z: collect if xz, yz
-    
+
+
+    if(currentSpawn == 0) { // +y
+        for(int i = 0; i < finishAxis.size(); i++) {
+            if(finishAxis[i][10] == 0) {
+                std::cout << "a\n";
+                int j = 0;
+                while(cubeArray[j] != glm::vec4(-1, -1, -1, -1.0)) {
+                    if(cubeArray[j].x == cubeArray[finishAxis[i][0]].x && cubeArray[j].y > cubeArray[finishAxis[i][0]].y) {
+                        cubesCheck.push_back(glm::vec3(cubeArray[j].x, cubeArray[j].y, cubeArray[j].z));
+                        cubeArray[j].y -= 10;
+
+                    }
+
+                    j++;
+                }
+            }
+            else if(finishAxis[i][10] == 2) {
+                std::cout << "b\n";
+                int j = 0;
+                while(cubeArray[j] != glm::vec4(-1, -1, -1, -1.0)) {
+                    if(cubeArray[j].z == cubeArray[finishAxis[i][0]].z && cubeArray[j].y > cubeArray[finishAxis[i][0]].y) {
+                        cubesCheck.push_back(glm::vec3(cubeArray[j].x, cubeArray[j].y, cubeArray[j].z));
+                        cubeArray[j].y -= 10;
+                        std::cout << j << "\n";
+
+                    }
+
+                    j++;
+                }
+            }
+        }
+    }
+    else if(currentSpawn == 1) { // -y
+        std::cout << "1\n";
+        for(int i = 0; i < finishAxis.size(); i++) {
+            if(finishAxis[i][10] == 0) {
+                int j = 0;
+                while(cubeArray[j] != glm::vec4(-1, -1, -1, -1.0)) {
+                    if(cubeArray[j].x == cubeArray[finishAxis[i][0]].x && cubeArray[j].y < cubeArray[finishAxis[i][0]].y) {
+                        cubesCheck.push_back(glm::vec3(cubeArray[j].x, cubeArray[j].y, cubeArray[j].z));
+                        cubeArray[j].y += 10;
+                    }
+
+
+                    j++;
+                }
+            }
+            else if(finishAxis[i][10] == 2) {
+                int j = 0;
+                while(cubeArray[j] != glm::vec4(-1, -1, -1, -1.0)) {
+                    if(cubeArray[j].z == cubeArray[finishAxis[i][0]].z && cubeArray[j].y < cubeArray[finishAxis[i][0]].y) {
+                        cubesCheck.push_back(glm::vec3(cubeArray[j].x, cubeArray[j].y, cubeArray[j].z));
+                        cubeArray[j].y += 10;
+                    }
+
+                    j++;
+                }
+            }
+        }
+    }
+    else if(currentSpawn == 2) { // +x
+        for(int i = 0; i < finishAxis.size(); i++) {
+            if(finishAxis[i][10] == 0) {
+                int j = 0;
+                while(cubeArray[j] != glm::vec4(-1, -1, -1, -1.0)) {
+                    if(cubeArray[j].y == cubeArray[finishAxis[i][0]].y && cubeArray[j].x > cubeArray[finishAxis[i][0]].x) {
+                        cubesCheck.push_back(glm::vec3(cubeArray[j].x, cubeArray[j].y, cubeArray[j].z));
+                        cubeArray[j].x += 10;
+                    }
+
+
+                    j++;
+                }
+            }
+            else if(finishAxis[i][10] == 1) {
+                int j = 0;
+                while(cubeArray[j] != glm::vec4(-1, -1, -1, -1.0)) {
+                    if(cubeArray[j].z == cubeArray[finishAxis[i][0]].z && cubeArray[j].x > cubeArray[finishAxis[i][0]].x) {
+                        cubesCheck.push_back(glm::vec3(cubeArray[j].x, cubeArray[j].y, cubeArray[j].z));
+                        cubeArray[j].x += 10;
+                    }
+
+                    j++;
+                }
+            }
+        }
+    }
+    else if(currentSpawn == 3) { // -x
+        for(int i = 0; i < finishAxis.size(); i++) {
+            if(finishAxis[i][10] == 0) {
+                int j = 0;
+                while(cubeArray[j] != glm::vec4(-1, -1, -1, -1.0)) {
+                    if(cubeArray[j].y == cubeArray[finishAxis[i][0]].y && cubeArray[j].x < cubeArray[finishAxis[i][0]].x) {
+                        cubesCheck.push_back(glm::vec3(cubeArray[j].x, cubeArray[j].y, cubeArray[j].z));
+                        cubeArray[j].x -= 10;
+                    }
+
+
+                    j++;
+                }
+            }
+            else if(finishAxis[i][10] == 1) {
+                int j = 0;
+                while(cubeArray[j] != glm::vec4(-1, -1, -1, -1.0)) {
+                    if(cubeArray[j].z == cubeArray[finishAxis[i][0]].z && cubeArray[j].x < cubeArray[finishAxis[i][0]].x) {
+                        cubesCheck.push_back(glm::vec3(cubeArray[j].x, cubeArray[j].y, cubeArray[j].z));
+                        cubeArray[j].x -= 10;
+                    }
+
+                    j++;
+                }
+            }
+        }
+    }
+    else if(currentSpawn == 4) { // +z
+        for(int i = 0; i < finishAxis.size(); i++) {
+            if(finishAxis[i][10] == 1) {
+                int j = 0;
+                while(cubeArray[j] != glm::vec4(-1, -1, -1, -1.0)) {
+                    if(cubeArray[j].x == cubeArray[finishAxis[i][0]].x && cubeArray[j].z > cubeArray[finishAxis[i][0]].z) {
+                        cubesCheck.push_back(glm::vec3(cubeArray[j].x, cubeArray[j].y, cubeArray[j].z));
+                        cubeArray[j].z += 10;
+                    }
+
+
+                    j++;
+                }
+            }
+            else if(finishAxis[i][10] == 2) {
+                int j = 0;
+                while(cubeArray[j] != glm::vec4(-1, -1, -1, -1.0)) {
+                    if(cubeArray[j].y == cubeArray[finishAxis[i][0]].y && cubeArray[j].z > cubeArray[finishAxis[i][0]].z) {
+                        cubesCheck.push_back(glm::vec3(cubeArray[j].x, cubeArray[j].y, cubeArray[j].z));
+                        cubeArray[j].z += 10;
+                    }
+
+                    j++;
+                }
+            }
+        }
+    }
+    else { // -z
+        for(int i = 0; i < finishAxis.size(); i++) {
+            if(finishAxis[i][10] == 1) {
+                int j = 0;
+                while(cubeArray[j] != glm::vec4(-1, -1, -1, -1.0)) {
+                    if(cubeArray[j].x == cubeArray[finishAxis[i][0]].x && cubeArray[j].z < cubeArray[finishAxis[i][0]].z) {
+                        cubesCheck.push_back(glm::vec3(cubeArray[j].x, cubeArray[j].y, cubeArray[j].z));
+                        cubeArray[j].z -= 10;
+                    }
+
+
+                    j++;
+                }
+            }
+            else if(finishAxis[i][10] == 2) {
+                int j = 0;
+                while(cubeArray[j] != glm::vec4(-1, -1, -1, -1.0)) {
+                    if(cubeArray[j].y == cubeArray[finishAxis[i][0]].y && cubeArray[j].z < cubeArray[finishAxis[i][0]].z) {
+                        cubesCheck.push_back(glm::vec3(cubeArray[j].x, cubeArray[j].y, cubeArray[j].z));
+                        cubeArray[j].z -= 10;
+                    }
+
+                    j++;
+                }
+            }
+        }
+    }
+
+        //case 2:
+
+        //case 3: // -x
+        //case 4: // +z
+        //case 5: // -z
+
+
+    for (int i = 0; i < finishAxis.size(); i++) {
+        for (int j = 0; j < 10; j++) {
+            cubeArray[finishAxis[i][j]] = glm::vec4(-1, -1, -1, -1.0);
+        }
+    }
+    orderArray();
+
+    if(cubesCheck.size() > 0) completionCheck();
     // empty cubes check
     // add gravitied cubes to it
     // completeion check again
