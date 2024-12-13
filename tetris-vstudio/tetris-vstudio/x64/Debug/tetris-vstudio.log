@@ -1,4 +1,5 @@
 ﻿  main.cpp
-C:\Users\Christianna\Documents\GitHub\tetris-3d\source\main.cpp(315,35): warning C4305: '=': truncation from 'double' to 'float'
-C:\Users\Christianna\Documents\GitHub\tetris-3d\source\main.cpp(458,20): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\Christianna\Documents\GitHub\tetris-3d\source\main.cpp(326,35): warning C4305: '=': truncation from 'double' to 'float'
+C:\Users\Christianna\Documents\GitHub\tetris-3d\source\main.cpp(580,14): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+C:\Users\Christianna\Documents\GitHub\tetris-3d\source\main.cpp(581,14): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
   tetris-vstudio.vcxproj -> C:\Users\Christianna\Documents\GitHub\tetris-3d\tetris-vstudio\x64\Debug\tetris-vstudio.exe

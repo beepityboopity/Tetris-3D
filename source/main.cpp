@@ -42,7 +42,8 @@ double lastMove = 0.0;
 double lastGrav = 0.0;
 double lastRotate = 0.0;
 int currentSpawn = 0;
-glm::vec3 temp[8];
+glm::vec3 temp = glm::vec3(0, 0, 0);
+glm::vec3 activeOffset = glm::vec3(0, 0, 0);
 
 glm::vec4 cubeArray[1000] = {};
 std::vector<glm::vec3> cubesCheck = {};
@@ -85,7 +86,6 @@ glm::vec3(25, 35, 5),
 
 };
 
-
 glm::vec3 octoBranch[8] = {
     glm::vec3(5, 5, 5),
     glm::vec3(5, 15, 5),
@@ -117,19 +117,19 @@ std::uniform_int_distribution<> distr(0, 5);
 
 int main() {
     for(int i = 0; i < 8; i++) activePiece[i] = octoBranch[i];
-    for(int i = 0; i < 8; i++) activePiece[i].y += 100;
+    activeOffset.y += 100;
 
     for(int i = 0; i < 1000; i++) cubeArray[i] = glm::vec4(-1, -1, -1, -1.0);
-
-    for(int i = -45; i < 30; i += 10) {
+    
+    for(int i = -45; i < 40; i += 10) {
         cubeArray[i + 45] = glm::vec4(i, -45, 45, 1.0);
     }
 
-    for(int i = -45; i < 30; i += 10) {
+    for(int i = -45; i < 40; i += 10) {
         cubeArray[i + 45 + 1] = glm::vec4(i, -25, 45, 1.0);
     }
 
-    orderArray();
+    orderArray(); // breaks collision if not called here
 
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -254,14 +254,11 @@ int main() {
     baseShader.setMat4("view", view);
     baseShader.setMat4("projection", projection);
 
-
-
     while (!glfwWindowShouldClose(window)) {
         camInput(window);
         moveActive(window);
         rotateActive(window);
-        //gravity();
-
+        gravity();
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -286,7 +283,7 @@ int main() {
         // shape test
         for(int i = 0; i < 8; i++) {
             model = glm::mat4(1.0f);
-            model = glm::translate(model, glm::vec3((float)activePiece[i].x / 100, (float)activePiece[i].y / 100, (float)activePiece[i].z / 100));
+            model = glm::translate(model, glm::vec3(((float)activePiece[i].x + activeOffset.x) / 100, ((float)activePiece[i].y + activeOffset.y) / 100, ((float)activePiece[i].z + activeOffset.z) / 100));
             model = glm::scale(model, glm::vec3(0.1, 0.1, 0.1));
             baseShader.setMat4("model", model);
             glDrawArrays(GL_TRIANGLES, 0, 36);
@@ -302,7 +299,6 @@ int main() {
                 glDrawArrays(GL_TRIANGLES, 0, 36);
             }
         }
-
 
         glfwSwapBuffers(window);
         glfwPollEvents();
@@ -337,84 +333,88 @@ void camInput(GLFWwindow* window) {
 void moveActive(GLFWwindow* window) {
     if(glfwGetTime() - lastMove < 0.15) return;
 
-    for(int i = 0; i < 8; i++) temp[i] = activePiece[i];
+    temp = activeOffset;
 
     if(glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
         if(spawns[currentSpawn].y != 0) {
-            for(int i = 0; i < 8; i++) activePiece[i].x += 10;
+            activeOffset.x += 10;
 
         }
         else {
-            for(int i = 0; i < 8; i++) activePiece[i].y += 10;
+            activeOffset.y += 10;
         }
         lastMove = glfwGetTime();
     }
 
     if(glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
         if(spawns[currentSpawn].y != 0) {
-            for(int i = 0; i < 8; i++) activePiece[i].x += -10;
+            activeOffset.x += -10;
 
         }
         else {
-            for(int i = 0; i < 8; i++) activePiece[i].y += -10;
+            activeOffset.y += -10;
         }
         lastMove = glfwGetTime();
     }
 
     if(glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
         if(spawns[currentSpawn].z != 0) {
-            for(int i = 0; i < 8; i++) activePiece[i].x += -10;
+            activeOffset.x += -10;
 
         }
         else {
-            for(int i = 0; i < 8; i++) activePiece[i].z += -10;
+            activeOffset.z += -10;
         }
         lastMove = glfwGetTime();
     }
 
     if(glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
         if(spawns[currentSpawn].z != 0) {
-            for(int i = 0; i < 8; i++) activePiece[i].x += 10;
+            activeOffset.x += 10;
 
         }
         else {
-            for(int i = 0; i < 8; i++) activePiece[i].z += 10;
+            activeOffset.z += 10;
         }
         lastMove = glfwGetTime();
     }
 
-    if (glfwGetKey(window, GLFW_KEY_M) == GLFW_PRESS) {
+    if (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS) {
         newPieceSpawn();
         lastMove = glfwGetTime();
     }
     if(!collisionTest()) {
-        for(int i = 0; i < 8; i++) activePiece[i] = temp[i];
+        activeOffset = temp;
     }
 }
 
 bool collisionTest() {
     for(int i = 0; i < 8; i++) {
-
+        glm::vec3 geezer = glm::vec3(activePiece[i].x + activeOffset.x, activePiece[i].y + activeOffset.y, activePiece[i].z + activeOffset.z);
         if(spawns[currentSpawn].x != 0) {
-            if((activePiece[i].y > 45 || activePiece[i].y < -45) || (activePiece[i].z > 45 || activePiece[i].z < -45)) return false;
+            if((geezer.y > 45 || geezer.y < -45) || (geezer.z > 45 || geezer.z < -45)) return false;
+            
         }
         else if(spawns[currentSpawn].y != 0) {
-            if((activePiece[i].x > 45 || activePiece[i].x < -45) || (activePiece[i].z > 45 || activePiece[i].z < -45)) return false;
+            if((geezer.x >= 45 || geezer.x < -45) || (geezer.z > 45 || geezer.z < -45)) return false;
+            std::cout << "spawn: " << spawns[currentSpawn].x << " " << spawns[currentSpawn].y << " " << spawns[currentSpawn].z << "\n";
+            std::cout << "piece: " << activePiece[i].x << " " << activePiece[i].y << " " << activePiece[i].z << "\n";
+            std::cout << "offse: " << activeOffset.x << " " << activeOffset.y << " " << activeOffset.z << "\n";
         }
         else{
-            if((activePiece[i].y > 45 || activePiece[i].y < -45) || (activePiece[i].x > 45 || activePiece[i].x < -45)) return false;
+            if((geezer.y > 45 || geezer.y < -45) || (geezer.x > 45 || geezer.x < -45)) return false;
         }
 
-        if(spawns[currentSpawn].x == 10 && activePiece[i].x < -45) return false;
-        else if(spawns[currentSpawn].x == -10 && activePiece[i].x > 45) return false;
-        else if(spawns[currentSpawn].y == 10 && activePiece[i].y < -45) return false;
-        else if(spawns[currentSpawn].y == -10 && activePiece[i].y > 45) return false;
-        else if(spawns[currentSpawn].z == 10 && activePiece[i].z < -45) return false;
-        else if(spawns[currentSpawn].z == -10 && activePiece[i].z > 45) return false;
+        if(spawns[currentSpawn].x == 10 && geezer.x < -45) return false;
+        else if(spawns[currentSpawn].x == -10 && geezer.x > 45) return false;
+        else if(spawns[currentSpawn].y == 10 && geezer.y < -45) return false;
+        else if(spawns[currentSpawn].y == -10 && geezer.y > 45) return false;
+        else if(spawns[currentSpawn].z == 10 && geezer.z < -45) return false;
+        else if(spawns[currentSpawn].z == -10 && geezer.z > 45) return false;
 
         int j = 0;
         while(cubeArray[j].w != -1.0) {
-            if(glm::vec3(cubeArray[j].x, cubeArray[j].y, cubeArray[j].z) == activePiece[i]) {
+            if(glm::vec3(cubeArray[j].x, cubeArray[j].y, cubeArray[j].z) == geezer) {
                 return false;
             }
             j += 1;
@@ -424,26 +424,23 @@ bool collisionTest() {
 }
 
 void newPieceSpawn() {
-
-
     int endInd = 0;
     while(cubeArray[endInd].w != -1.0) endInd += 1;
-    for(int i = 0; i < 8; i++) cubeArray[endInd + i] = glm::vec4(activePiece[i].x, activePiece[i].y, activePiece[i].z, 1.0);
-    for (int i = 0; i < 8; i++) cubesCheck.push_back(activePiece[i]);
+    for(int i = 0; i < 8; i++) cubeArray[endInd + i] = glm::vec4(activePiece[i].x + activeOffset.x, activePiece[i].y + activeOffset.y, activePiece[i].z + activeOffset.z, 1.0);
+    for (int i = 0; i < 8; i++) cubesCheck.push_back(activePiece[i] + activeOffset);
     completionCheck();
     orderArray();
     currentSpawn = distr(gen);
     for(int i = 0; i < 8; i++) activePiece[i] = octoCube[i] + (spawns[currentSpawn] * glm::vec3(10));
+    activeOffset = glm::vec3(0, 0, 0);
  }
 
 void gravity() {
     if(glfwGetTime() - lastGrav < 0.5) return;
-    for(int i = 0; i < 8; i++) temp[i] = activePiece[i];
-    for(int i = 0; i < 8; i++) {
-        activePiece[i] -= spawns[currentSpawn];
-    }
+    temp = activeOffset;
+    activeOffset -= spawns[currentSpawn];
     if(!collisionTest()) {
-        for(int i = 0; i < 8; i++) activePiece[i] = temp[i];
+        activeOffset = temp;
         newPieceSpawn();
     }
     lastGrav = glfwGetTime();
@@ -580,6 +577,34 @@ std::vector<std::vector<int>> getRows(std::vector<glm::vec3> axis) {
 
 void rotateActive(GLFWwindow* window) {
     if(glfwGetTime() - lastRotate < 0.15) return;
+    int rCos = glm::cos(glm::radians((float)90));
+    int rSin = glm::sin(glm::radians((float)90));
+    glm::mat3 xRot = glm::mat3(1, 0, 0,
+        0, rCos, -rSin,
+        0, rSin, rCos);
+    glm::mat3 yRot = glm::mat3(rCos, 0, rSin,
+        0, 1, 0,
+        -rSin, 0, rCos);
+    glm::mat3 zRot = glm::mat3(rCos, rSin, 0,
+        -rSin, rCos, 0,
+        0, 0, 1);
+
+    if (glfwGetKey(window, GLFW_KEY_B) == GLFW_PRESS) {
+        for (int i = 0; i < 8; i++) {
+            activePiece[i] = xRot * activePiece[i];
+        }
+        lastRotate = glfwGetTime();
+    }
+    else if (glfwGetKey(window, GLFW_KEY_N) == GLFW_PRESS) {
+        for (int i = 0; i < 8; i++) {
+            activePiece[i] = yRot * activePiece[i];
+        }
+        lastRotate = glfwGetTime();
+    }
+    else if (glfwGetKey(window, GLFW_KEY_M) == GLFW_PRESS) {
+        for (int i = 0; i < 8; i++) {
+            activePiece[i] = zRot * activePiece[i];
+        }
+        lastRotate = glfwGetTime();
+    }
 }
-
-

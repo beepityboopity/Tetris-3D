@@ -1,3 +1,108 @@
+TODO
+----
+
+different colored blocks
+multiple camera views
+randomized new block type
+add new block types
+adjust block positions for better rotation
+start/pause buttons
+score
+adjust keybinds
+prettier lighting
+music
+anti aliasing
+make the code pretty
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+PROCESS ------------------------------------------------------------------------
+
+Initialization:
+- set active piece to branch
+  (set active piece position)
+- fill cube array with placeholder cubes
+- add temporary blocks to test collision
+[call order array] <-- unnecessary?
+- shader and texture setup (no change needed yet)
+- initialize shader variables
+
+While:
+
+- camera input
+- piece movement (inactive for testing)
+- piece rotation (build in progress)
+- piece gravity (inactive for testing)
+- set camera position
+- draw playing field
+- draw active piece
+- draw present pieces in cube array
+- event polling
+
+Terminate:
+
+- delete buffers
+- end program
+
+FUNCTIONS ------------------------------------------------------------------------
+
+camInput: (while loop)
+
+adjusts global camera variables based on key input
+rotation = I, K, J, L
+zoom = Q, E
+sets variable limits
+
+moveActive: (while loop)
+
+moves active piece within certain limits
+movement keys: W, S, A, D
+TEMP: press M for newPieceSpawn
+call collisionTest, add to temp
+
+rotateActive: (while loop)
+
+gravity: (while loop)
+
+collisionTest: (moveActive)
+
+newPieceSpawn: (temp moveActive, gravity)
+
+completionCheck: (newPieceSpawn, self)
+
+
+
+
+
+
+
+
+
+
+**************************************************************
+OLD NOTES
+**************************************************************
+
 8 piece tetrominos
 pieces = 0.1 size of playing field
 tetrominos spawn 1.5 away from center
