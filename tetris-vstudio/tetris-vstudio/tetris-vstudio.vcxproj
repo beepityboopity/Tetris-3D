@@ -133,6 +133,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\resources\Add To Project\glad.c" />
+    <ClCompile Include="..\..\resources\includes\imgui\imgui.cpp" />
+    <ClCompile Include="..\..\resources\includes\imgui\imgui_demo.cpp" />
+    <ClCompile Include="..\..\resources\includes\imgui\imgui_draw.cpp" />
+    <ClCompile Include="..\..\resources\includes\imgui\imgui_impl_glfw.cpp" />
+    <ClCompile Include="..\..\resources\includes\imgui\imgui_impl_opengl3.cpp" />
+    <ClCompile Include="..\..\resources\includes\imgui\imgui_tables.cpp" />
+    <ClCompile Include="..\..\resources\includes\imgui\imgui_widgets.cpp" />
     <ClCompile Include="..\..\resources\includes\shaders\shader_class.cpp" />
     <ClCompile Include="..\..\resources\includes\texture setup\stbi_load.cpp" />
     <ClCompile Include="..\..\source\main.cpp" />

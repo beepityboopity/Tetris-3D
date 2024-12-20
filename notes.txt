@@ -1,27 +1,26 @@
 TODO
 ----
 
-different colored blocks
-multiple camera views
-randomized new block type
-add new block types
-adjust block positions for better rotation
-start/pause buttons
-score
-adjust keybinds
-prettier lighting
+different colored blocks - Done
+multiple camera views - Done
+randomized new block type - Done
+add new block types - Done
+adjust block positions for better rotation - Done
+start/pause buttons - Done
+score - Done
+adjust keybinds - Done
 music
-anti aliasing
+anti aliasing - Done
 make the code pretty
 
 
 
 
 
-
-
-
-
+Q+E rotate camera
+W+A+S+D move piece
+J+K+L rotate piece
+R pause game
 
 
 
