@@ -6,12 +6,12 @@
       "AbsoluteMoniker": "D:0:0:{CA36EE85-15B0-4D1C-AD4F-7327F6E96CA7}|tetris-vstudio\\tetris-vstudio.vcxproj|C:\\Users\\Christianna\\Documents\\GitHub\\tetris-3d\\source\\main.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{CA36EE85-15B0-4D1C-AD4F-7327F6E96CA7}|tetris-vstudio\\tetris-vstudio.vcxproj|C:\\Users\\Christianna\\Documents\\GitHub\\tetris-3d\\tetris-vstudio\\tetris-vstudio\\frag1.fs||{3B902123-F8A7-4915-9F01-361F908088D0}",
-      "RelativeMoniker": "D:0:0:{CA36EE85-15B0-4D1C-AD4F-7327F6E96CA7}|tetris-vstudio\\tetris-vstudio.vcxproj|solutionrelative:tetris-vstudio\\frag1.fs||{3B902123-F8A7-4915-9F01-361F908088D0}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{CA36EE85-15B0-4D1C-AD4F-7327F6E96CA7}|tetris-vstudio\\tetris-vstudio.vcxproj|C:\\Users\\Christianna\\Documents\\GitHub\\tetris-3d\\tetris-vstudio\\tetris-vstudio\\vertex1.vs||{8B382828-6202-11D1-8870-0000F87579D2}",
       "RelativeMoniker": "D:0:0:{CA36EE85-15B0-4D1C-AD4F-7327F6E96CA7}|tetris-vstudio\\tetris-vstudio.vcxproj|solutionrelative:tetris-vstudio\\vertex1.vs||{8B382828-6202-11D1-8870-0000F87579D2}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{CA36EE85-15B0-4D1C-AD4F-7327F6E96CA7}|tetris-vstudio\\tetris-vstudio.vcxproj|C:\\Users\\Christianna\\Documents\\GitHub\\tetris-3d\\tetris-vstudio\\tetris-vstudio\\frag1.fs||{3B902123-F8A7-4915-9F01-361F908088D0}",
+      "RelativeMoniker": "D:0:0:{CA36EE85-15B0-4D1C-AD4F-7327F6E96CA7}|tetris-vstudio\\tetris-vstudio.vcxproj|solutionrelative:tetris-vstudio\\frag1.fs||{3B902123-F8A7-4915-9F01-361F908088D0}"
     }
   ],
   "DocumentGroupContainers": [
@@ -31,14 +31,14 @@
               "RelativeDocumentMoniker": "..\\source\\main.cpp",
               "ToolTip": "C:\\Users\\Christianna\\Documents\\GitHub\\tetris-3d\\source\\main.cpp",
               "RelativeToolTip": "..\\source\\main.cpp",
-              "ViewState": "AQIAAN0AAAAAAAAAAAAAAMIBAAAAAAAA",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAHoAAAAGAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2024-09-13T00:50:40.011Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 1,
               "Title": "vertex1.vs",
               "DocumentMoniker": "C:\\Users\\Christianna\\Documents\\GitHub\\tetris-3d\\tetris-vstudio\\tetris-vstudio\\vertex1.vs",
               "RelativeDocumentMoniker": "tetris-vstudio\\vertex1.vs",
@@ -50,7 +50,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 2,
               "Title": "frag1.fs",
               "DocumentMoniker": "C:\\Users\\Christianna\\Documents\\GitHub\\tetris-3d\\tetris-vstudio\\tetris-vstudio\\frag1.fs",
               "RelativeDocumentMoniker": "tetris-vstudio\\frag1.fs",

@@ -12,26 +12,39 @@
 #include <random>
 #include <vector>
 
+
+// Function definition ------------------------------------------------------------------------------------------------
+
+// graphics specific
 void frameCallback(GLFWwindow* window, int width, int height);
 void imguiSetup(GLFWwindow* window, const char* glsl_version);
+void drawStuff(Shader shader, glm::mat4 model, glm::mat4 view, glm::mat4 projection);
+
+// user input
 void camInput(GLFWwindow* window);
 void moveActive(GLFWwindow* window);
+void otherInput(GLFWwindow* window);
+void rotateActive(GLFWwindow* window);
+
+// internal logic
 bool collisionTest();
 void newPieceSpawn();
 void gravity();
 void orderArray();
-void printCubeArray();
 void completionCheck();
 std::vector<glm::vec3> getAxis(std::vector<glm::vec3> cubeList);
 std::vector<std::vector<int>> getRows(std::vector<glm::vec3> axis);
-void rotateActive(GLFWwindow* window);
+
+// other
 int randInt(int low, int high);
-void otherInput(GLFWwindow* window);
-void drawStuff(Shader shader, glm::mat4 model, glm::mat4 view, glm::mat4 projection);
+void printCubeArray();
+
+// Variables -----------------------------------------------------------------------------------------------------------
 
 int score = 0;
 bool fail = false;
 bool startGame = false;
+bool paused = false;
 
 int rotationVar2 = 45;
 float zoomVar = -7;
@@ -42,7 +55,7 @@ double lastRotate = 0.0;
 double lastInput = 0.0;
 int currentSpawn = 0;
 int currentPiece = 0;
-bool paused = false;
+
 glm::vec3 temp = glm::vec3(0, 0, 0);
 glm::vec3 activeOffset = glm::vec3(0, 0, 0);
 
@@ -58,7 +71,6 @@ std::vector<std::vector<glm::vec3>> shapes = {
     {glm::vec3(5, -5, 5), glm::vec3(5, -5, -5), glm::vec3(5, 5, -5), glm::vec3(-5, 5, -5), glm::vec3(-5, 15, -5), glm::vec3(-5, 15, 5), glm::vec3(-5, 25, 5), glm::vec3(5, 25, 5)}, // staircase
     {glm::vec3(5, 5, 5), glm::vec3(5, 5, -5), glm::vec3(-5, 5, 5), glm::vec3(-5, 5, -5), glm::vec3(5, 15, 5), glm::vec3(5, 25, 5), glm::vec3(-5, -5, -5), glm::vec3(-5, -15, -5)}, // reel
 };
-
 glm::vec3 colors[10] = {
     glm::vec3(0.8, 0.0, 0.0), //red
     glm::vec3(0.4, 0.22, 0.77), // purple
@@ -73,8 +85,8 @@ glm::vec3 colors[10] = {
 };
 
 glm::vec4 cubeArray[1000] = {};
-std::vector<glm::vec3> cubesCheck = {};
 glm::vec3 activePiece[8];
+std::vector<glm::vec3> cubesCheck = {};
 
 glm::vec3 spawns[6] {
 
@@ -87,13 +99,11 @@ glm::vec3 spawns[6] {
 
 };
 
-int main() {
-    currentPiece = randInt(0, 9);
-    for(int i = 0; i < 8; i++) activePiece[i] = shapes[currentPiece][i];
-    activeOffset.y += 100;
+// Main --------------------------------------------------------------------------------------------------------------------
 
-    for(int i = 0; i < 1000; i++) cubeArray[i] = glm::vec4(-1, -1, -1, -1);
-    orderArray(); // breaks collision if not called here
+int main() {
+
+    // Window setup ------------------------------------------------------------------------------------------------------
 
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -110,8 +120,8 @@ int main() {
     imguiSetup(window, "#version 130");
     Shader baseShader("vertex1.vs", "frag1.fs");
     baseShader.use();
-
-    float vertices[] = {
+    /*
+    float vert[] = {
         /// for a full cube
         -0.5f, -0.5f, -0.5f,        0.0f, 0.0f, 0.0f, 0.0f, -1.0f,// bottom left
          0.5f, -0.5f, -0.5f,        1.0f, 0.0f, 0.0f, 0.0f, -1.0f,// bottom right
@@ -155,6 +165,53 @@ int main() {
         -0.5f,  0.5f, -0.5f,        0.0f, 1.0f, 0.0f, 1.0f, 0.0f,// top left
         -0.5f,  0.5f,  0.5f,        0.0f, 0.0f, 0.0f, 1.0f, 0.0f,// bottom left
     };
+    */
+    float vertices[] = {
+        /// for a full cube
+        -0.5f, -0.5f, -0.5f,        0.0f, 0.0f, // bottom left
+         0.5f, -0.5f, -0.5f,        1.0f, 0.0f, // bottom right
+         0.5f,  0.5f, -0.5f,        1.0f, 1.0f, // top right
+         0.5f,  0.5f, -0.5f,        1.0f, 1.0f, // top right
+        -0.5f,  0.5f, -0.5f,        0.0f, 1.0f, // top left
+        -0.5f, -0.5f, -0.5f,        0.0f, 0.0f, // bottom left
+        ///
+        -0.5f, -0.5f,  0.5f,        0.0f, 0.0f, // bottom left
+         0.5f, -0.5f,  0.5f,        1.0f, 0.0f, // bottom right
+         0.5f,  0.5f,  0.5f,        1.0f, 1.0f, // top right
+         0.5f,  0.5f,  0.5f,        1.0f, 1.0f, // top right
+        -0.5f,  0.5f,  0.5f,        0.0f, 1.0f, // top left
+        -0.5f, -0.5f,  0.5f,        0.0f, 0.0f, // bottom left
+        ///
+        -0.5f, -0.5f,  0.5f,        0.0f, 0.0f, // bottom left
+        -0.5f,  0.5f,  0.5f,        1.0f, 0.0f, // bottom right
+        -0.5f,  0.5f, -0.5f,        1.0f, 1.0f, // top right
+        -0.5f,  0.5f, -0.5f,        1.0f, 1.0f, // top right
+        -0.5f, -0.5f, -0.5f,        0.0f, 1.0f, // top left
+        -0.5f, -0.5f,  0.5f,        0.0f, 0.0f, // bottom left
+        ///
+         0.5f,  0.5f,  0.5f,        0.0f, 0.0f, // bottom left
+         0.5f, -0.5f,  0.5f,        1.0f, 0.0f, // bottom right
+         0.5f, -0.5f, -0.5f,        1.0f, 1.0f, // top right
+         0.5f, -0.5f, -0.5f,        1.0f, 1.0f, // top right
+         0.5f,  0.5f, -0.5f,        0.0f, 1.0f, // top left
+         0.5f,  0.5f,  0.5f,        0.0f, 0.0f, // bottom left
+         ///
+          0.5f, -0.5f,  0.5f,        0.0f, 0.0f, // bottom left
+         -0.5f, -0.5f,  0.5f,        1.0f, 0.0f, // bottom right
+         -0.5f, -0.5f, -0.5f,        1.0f, 1.0f, // top right
+         -0.5f, -0.5f, -0.5f,        1.0f, 1.0f, // top right
+          0.5f, -0.5f, -0.5f,        0.0f, 1.0f, // top left
+          0.5f, -0.5f,  0.5f,        0.0f, 0.0f, // bottom left
+          ///
+          -0.5f,  0.5f,  0.5f,        0.0f, 0.0f, // bottom left
+           0.5f,  0.5f,  0.5f,        1.0f, 0.0f, // bottom right
+           0.5f,  0.5f, -0.5f,        1.0f, 1.0f, // top right
+           0.5f,  0.5f, -0.5f,        1.0f, 1.0f, // top right
+          -0.5f,  0.5f, -0.5f,        0.0f, 1.0f, // top left
+          -0.5f,  0.5f,  0.5f,        0.0f, 0.0f, // bottom left
+    };
+
+    // Buffers -------------------------------------------------------------------------------------------------------------
 
     unsigned int VBO, VAO;
     glGenVertexArrays(1, &VAO);
@@ -164,12 +221,14 @@ int main() {
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
+
+    // Textures ------------------------------------------------------------------------------------------------------------
 
     unsigned int gridTexture;
     int width, height, nrChannels;
@@ -211,6 +270,15 @@ int main() {
     glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D, cubeTexture);
 
+    // Game Setup ------------------------------------------------------------------------------------------------------------
+
+    currentPiece = randInt(0, 9);
+    for (int i = 0; i < 8; i++) activePiece[i] = shapes[currentPiece][i];
+    activeOffset.y += 100;
+
+    for (int i = 0; i < 1000; i++) cubeArray[i] = glm::vec4(-1, -1, -1, -1);
+    orderArray(); // breaks collision if not called here
+
     glm::mat4 model = glm::mat4(1.0f);
     glm::mat4 view = glm::mat4(1.0f);
     view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
@@ -223,6 +291,8 @@ int main() {
 
     while (!glfwWindowShouldClose(window) && !fail) {
         
+        // Input ------------------------------------------------------------------------------
+
         camInput(window);
         otherInput(window);
 
@@ -232,9 +302,13 @@ int main() {
             gravity();
         }
         
+        // Graphics ---------------------------------------------------------------------------------
+
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glBindVertexArray(VAO);
+
+        // Imgui --------------------------------------------------------------------------------------------
 
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
@@ -244,6 +318,8 @@ int main() {
         if (ImGui::Button("Start")) startGame = true;
         ImGui::Text("Score: %i", score);
         ImGui::End();
+
+        // Draw cameras -------------------------------------------------------------------------------------------
 
         // camera
         view = glm::mat4(1.0f);
@@ -286,6 +362,9 @@ int main() {
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
+
+    // Shutdown --------------------------------------------------------------------------------------------------
+
     std::cout << "GAME OVER\n";
     std::cout << "Score: " << score << "\n";
     glDeleteVertexArrays(1, &VAO);
@@ -296,6 +375,9 @@ int main() {
     glfwTerminate();
     return 0;
 }
+
+
+// Function Implementation ------------------------------------------------------------------------------------------------------------
 
 void frameCallback(GLFWwindow* window, int width, int height) {
     glViewport(0, 0, 200, 500);
