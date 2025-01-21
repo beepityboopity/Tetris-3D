@@ -7,51 +7,39 @@
 			<Cursor1 position="0" topLine="0" />
 		</Cursor>
 	</File>
-	<File name="../source/frag1.fs" open="0" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="../source/vertex1.vs" open="0" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="109" topLine="0" />
+			<Cursor1 position="176" topLine="0" />
 		</Cursor>
 	</File>
-	<File name="vertex1.vs" open="1" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="../source/main.cpp" open="1" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="285" topLine="0" />
+			<Cursor1 position="16556" topLine="255" />
 		</Cursor>
+		<Folding>
+			<Collapse line="61" />
+			<Collapse line="291" />
+			<Collapse line="395" />
+			<Collapse line="404" />
+			<Collapse line="442" />
+			<Collapse line="480" />
+			<Collapse line="524" />
+			<Collapse line="539" />
+		</Folding>
 	</File>
 	<File name="frag1.fs" open="1" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
 			<Cursor1 position="188" topLine="0" />
 		</Cursor>
 	</File>
-	<File name="../source/vertex1.vs" open="0" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="vertex1.vs" open="1" top="1" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="176" topLine="0" />
+			<Cursor1 position="285" topLine="0" />
 		</Cursor>
 	</File>
-	<File name="../source/main.cpp" open="1" top="1" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="../source/frag1.fs" open="0" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="16556" topLine="190" />
+			<Cursor1 position="109" topLine="0" />
 		</Cursor>
-		<Folding>
-			<Collapse line="49" />
-			<Collapse line="62" />
-			<Collapse line="75" />
-			<Collapse line="88" />
-			<Collapse line="146" />
-			<Collapse line="296" />
-			<Collapse line="315" />
-			<Collapse line="319" />
-			<Collapse line="336" />
-			<Collapse line="379" />
-			<Collapse line="394" />
-			<Collapse line="400" />
-			<Collapse line="425" />
-			<Collapse line="438" />
-			<Collapse line="451" />
-			<Collapse line="463" />
-			<Collapse line="469" />
-			<Collapse line="484" />
-			<Collapse line="526" />
-			<Collapse line="548" />
-		</Folding>
 	</File>
 </CodeBlocks_layout_file>

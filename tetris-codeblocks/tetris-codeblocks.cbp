@@ -34,12 +34,19 @@
 			<Add directory="../source" />
 		</Compiler>
 		<Linker>
-			<Add library="../../graphics_test/library/libglfw3.a" />
+			<Add library="../../graphics/libglfw3.a" />
 			<Add directory="../resources/includes" />
 		</Linker>
 		<Unit filename="../resources/Add To Project/glad.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="../resources/includes/imgui/imgui.cpp" />
+		<Unit filename="../resources/includes/imgui/imgui_demo.cpp" />
+		<Unit filename="../resources/includes/imgui/imgui_draw.cpp" />
+		<Unit filename="../resources/includes/imgui/imgui_impl_glfw.cpp" />
+		<Unit filename="../resources/includes/imgui/imgui_impl_opengl3.cpp" />
+		<Unit filename="../resources/includes/imgui/imgui_tables.cpp" />
+		<Unit filename="../resources/includes/imgui/imgui_widgets.cpp" />
 		<Unit filename="../resources/includes/shaders/shader_class.cpp" />
 		<Unit filename="../resources/includes/texture setup/stbi_load.cpp" />
 		<Unit filename="../source/frag1.fs" />
